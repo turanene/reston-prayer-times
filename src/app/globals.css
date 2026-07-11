@@ -1,0 +1,458 @@
+@import "tailwindcss";
+
+:root {
+  --background: #eef3f2;
+  --card: #ffffff;
+  --ink: #173a3a;
+  --muted: #687b7a;
+  --green: #0d6b63;
+  --green-dark: #07554f;
+  --green-soft: #e8f3f0;
+  --line: #dfe8e6;
+  --gold: #f4c56a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 35%),
+    linear-gradient(160deg, #f7faf9 0%, #e4eeec 100%);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+
+.phone-card {
+  width: min(100%, 540px);
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid rgba(13, 107, 99, 0.12);
+  border-radius: 32px;
+  box-shadow: 0 28px 80px rgba(23, 58, 58, 0.14);
+}
+
+.topbar {
+  padding: 28px 28px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow,
+.hero-label {
+  margin: 0 0 5px;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 6vw, 2rem);
+  line-height: 1.1;
+}
+
+.location {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.live-time {
+  flex: 0 0 auto;
+  padding: 10px 13px;
+  color: var(--green-dark);
+  background: var(--green-soft);
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.hero {
+  min-height: 230px;
+  margin: 0 18px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: white;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(244, 197, 106, 0.42), transparent 17%),
+    linear-gradient(135deg, var(--green-dark), var(--green));
+  border-radius: 26px;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hero::before {
+  width: 260px;
+  height: 260px;
+  right: -120px;
+  bottom: -150px;
+}
+
+.hero::after {
+  width: 160px;
+  height: 160px;
+  left: 45%;
+  top: -100px;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-label {
+  color: #bfe2dc;
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: clamp(2.2rem, 10vw, 3.6rem);
+  line-height: 1;
+}
+
+.hero-time {
+  margin: 10px 0 18px;
+  color: #eaf7f4;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.countdown {
+  width: fit-content;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-dark);
+  background: white;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.pulse {
+  width: 9px;
+  height: 9px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px rgba(244, 197, 106, 0.2);
+}
+
+.mosque {
+  width: 180px;
+  height: 170px;
+  position: relative;
+  flex: 0 0 180px;
+  opacity: 0.96;
+}
+
+.moon {
+  position: absolute;
+  right: 8px;
+  top: -8px;
+  color: var(--gold);
+  font-size: 2.4rem;
+  transform: rotate(-20deg);
+}
+
+.dome {
+  width: 100px;
+  height: 70px;
+  position: absolute;
+  left: 40px;
+  bottom: 38px;
+  background: #d8eee9;
+  border-radius: 60px 60px 8px 8px;
+}
+
+.finial {
+  position: absolute;
+  left: 44px;
+  top: -25px;
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.minaret {
+  width: 24px;
+  height: 105px;
+  position: absolute;
+  bottom: 38px;
+  background: #b9dfd7;
+  border-radius: 12px 12px 3px 3px;
+}
+
+.minaret::before {
+  content: "";
+  width: 36px;
+  height: 7px;
+  position: absolute;
+  left: -6px;
+  top: 28px;
+  background: var(--gold);
+  border-radius: 10px;
+}
+
+.minaret span {
+  width: 0;
+  height: 0;
+  position: absolute;
+  left: 2px;
+  top: -22px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 28px solid #b9dfd7;
+}
+
+.minaret.left {
+  left: 8px;
+}
+
+.minaret.right {
+  right: 8px;
+}
+
+.base {
+  width: 180px;
+  height: 44px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  background: #e9f7f4;
+  border-radius: 7px 7px 16px 16px;
+}
+
+.base i {
+  width: 25px;
+  height: 33px;
+  margin-top: 11px;
+  display: block;
+  background: var(--green);
+  border-radius: 16px 16px 0 0;
+}
+
+.date-row {
+  margin: 24px 28px 12px;
+  padding-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.date-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-row span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.date-row strong {
+  font-size: 1rem;
+}
+
+.date-row .hijri {
+  text-align: right;
+}
+
+.prayer-list {
+  padding: 0 18px 12px;
+}
+
+.prayer-row {
+  min-height: 72px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: 18px;
+}
+
+.prayer-row + .prayer-row {
+  margin-top: 3px;
+}
+
+.prayer-row.active {
+  background: var(--green-soft);
+}
+
+.prayer-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.prayer-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  color: var(--green);
+  background: #f1f6f5;
+  border-radius: 14px;
+  font-size: 1.25rem;
+}
+
+.active .prayer-icon {
+  color: white;
+  background: var(--green);
+}
+
+.prayer-name div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.prayer-name strong,
+.prayer-row time {
+  font-size: 1.12rem;
+}
+
+.prayer-name small {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.prayer-row time {
+  font-weight: 800;
+}
+
+footer {
+  padding: 18px 28px 28px;
+  color: var(--muted);
+  background: #f8faf9;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+footer p {
+  margin: 0;
+}
+
+footer p + p {
+  margin-top: 4px;
+}
+
+.message {
+  min-height: 420px;
+  padding: 50px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.error-message strong {
+  color: #8d2e2e;
+  font-size: 1.2rem;
+}
+
+.loader {
+  width: 36px;
+  height: 36px;
+  border: 4px solid var(--green-soft);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell {
+    padding: 0;
+    display: block;
+  }
+
+  .phone-card {
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .topbar {
+    padding: 22px 20px 18px;
+  }
+
+  .hero {
+    min-height: 215px;
+    margin: 0 12px;
+    padding: 24px 20px;
+  }
+
+  .mosque {
+    width: 130px;
+    height: 150px;
+    flex-basis: 130px;
+    transform: scale(0.78);
+    transform-origin: right center;
+  }
+
+  .date-row {
+    margin-inline: 20px;
+  }
+}
+
+@media (max-width: 390px) {
+  .mosque {
+    width: 90px;
+    flex-basis: 90px;
+    transform: scale(0.64);
+  }
+
+  .live-time {
+    display: none;
+  }
+}
