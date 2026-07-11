@@ -1,10 +1,10 @@
 {
-  "name": "Reston Prayer Times",
-  "short_name": "Prayer Times",
-  "description": "Daily prayer times for Reston, Virginia 20191.",
+  "name": "Reston Namaz Vakitleri",
+  "short_name": "Namaz Vakitleri",
+  "description": "Reston, Virginia 20191 için günlük namaz vakitleri.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#eef3f2",
   "theme_color": "#0d6b63",
-  "orientation": "portrait"
+  "orientation": "any"
 }
