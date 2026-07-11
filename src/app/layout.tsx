@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Reston Prayer Times",
-  description: "Daily prayer times for Reston, Virginia 20191.",
-  applicationName: "Reston Prayer Times",
+  title: "Reston Namaz Vakitleri",
+  description: "Reston, Virginia 20191 için günlük namaz vakitleri.",
+  applicationName: "Reston Namaz Vakitleri",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Prayer Times",
+    title: "Namaz Vakitleri",
     statusBarStyle: "default",
   },
 };
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr">
       <body>{children}</body>
     </html>
   );
