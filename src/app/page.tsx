@@ -1,8 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePrayerEngine } from "../hooks/usePrayerEngine";
 
-type PrayerKey = "Fajr" | "Sunrise" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+type PrayerKey =
+  | "Fajr"
+  | "Sunrise"
+  | "Dhuhr"
+  | "Asr"
+  | "Maghrib"
+  | "Isha";
 
 type PrayerResponse = {
   timings: Record<PrayerKey, string>;
@@ -13,7 +20,11 @@ type PrayerResponse = {
   location: string;
 };
 
-const prayers: Array<{ key: PrayerKey; label: string; icon: string }> = [
+const prayers: Array<{
+  key: PrayerKey;
+  label: string;
+  icon: string;
+}> = [
   { key: "Fajr", label: "İmsak", icon: "☾" },
   { key: "Sunrise", label: "Güneş", icon: "☀" },
   { key: "Dhuhr", label: "Öğle", icon: "◉" },
@@ -21,6 +32,23 @@ const prayers: Array<{ key: PrayerKey; label: string; icon: string }> = [
   { key: "Maghrib", label: "Akşam", icon: "◐" },
   { key: "Isha", label: "Yatsı", icon: "✦" },
 ];
+
+const prayerLabels: Record<string, string> = {
+  Fajr: "İmsak",
+  Dhuhr: "Öğle",
+  Asr: "İkindi",
+  Maghrib: "Akşam",
+  Isha: "Yatsı",
+};
+
+function getRestonDateKey(date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+}
 
 function parseTodayTime(value: string) {
   const clean = value.replace(/\s*\(.+\)\s*$/, "").trim();
@@ -45,48 +73,67 @@ function formatCountdown(milliseconds: number) {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  if (hours === 0) return `${minutes} dakika`;
-  if (minutes === 0) return `${hours} saat`;
-  return `${hours} saat ${minutes} dakika`;
+  if (hours === 0) return `${minutes} dakika kaldı`;
+  if (minutes === 0) return `${hours} saat kaldı`;
+  return `${hours} saat ${minutes} dakika kaldı`;
 }
 
 export default function Home() {
   const [data, setData] = useState<PrayerResponse | null>(null);
   const [now, setNow] = useState(new Date());
   const [error, setError] = useState("");
+  const dateKeyRef = useRef(getRestonDateKey());
+
+  const loadPrayerTimes = useCallback(async () => {
+    try {
+      const response = await fetch("/api/prayer-times", {
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error("Namaz vakitleri yüklenemedi.");
+      }
+
+      setData(await response.json());
+      setError("");
+    } catch {
+      setError(
+        "Namaz vakitleri yüklenemedi. Lütfen internet bağlantısını kontrol edin."
+      );
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadPrayerTimes() {
-      try {
-        const response = await fetch("/api/prayer-times", { cache: "no-store" });
+    void loadPrayerTimes();
 
-        if (!response.ok) {
-          throw new Error("Namaz vakitleri yüklenemedi.");
-        }
+    const clock = window.setInterval(() => {
+      const currentTime = new Date();
+      const currentDateKey = getRestonDateKey(currentTime);
 
-        setData(await response.json());
-      } catch {
-        setError("Namaz vakitleri yüklenemedi. Lütfen tekrar deneyin.");
+      setNow(currentTime);
+
+      if (currentDateKey !== dateKeyRef.current) {
+        dateKeyRef.current = currentDateKey;
+        void loadPrayerTimes();
       }
-    }
+    }, 1000);
 
-    loadPrayerTimes();
+    return () => window.clearInterval(clock);
+  }, [loadPrayerTimes]);
 
-    const timer = window.setInterval(() => {
-      setNow(new Date());
-    }, 30000);
-
-    return () => window.clearInterval(timer);
-  }, []);
+  const engine = usePrayerEngine(data?.timings ?? null);
 
   const nextPrayer = useMemo(() => {
     if (!data) return null;
 
-    const prayerOnly = prayers.filter((prayer) => prayer.key !== "Sunrise");
+    const prayerOnly = prayers.filter(
+      (prayer) => prayer.key !== "Sunrise"
+    );
 
     const upcoming = prayerOnly.find(
       (prayer) =>
-        parseTodayTime(data.timings[prayer.key]).getTime() > now.getTime()
+        parseTodayTime(data.timings[prayer.key]).getTime() >
+        now.getTime()
     );
 
     if (upcoming) {
@@ -95,7 +142,9 @@ export default function Home() {
       return {
         ...upcoming,
         time,
-        countdown: formatCountdown(time.getTime() - now.getTime()),
+        countdown: formatCountdown(
+          time.getTime() - now.getTime()
+        ),
       };
     }
 
@@ -107,119 +156,176 @@ export default function Home() {
       label: "İmsak",
       icon: "☾",
       time: fajrTomorrow,
-      countdown: formatCountdown(fajrTomorrow.getTime() - now.getTime()),
+      countdown: formatCountdown(
+        fajrTomorrow.getTime() - now.getTime()
+      ),
     };
   }, [data, now]);
 
+  if (error) {
+    return (
+      <main className="screen-center">
+        <section className="status-card">
+          <strong>Bir sorun oluştu</strong>
+          <span>{error}</span>
+        </section>
+      </main>
+    );
+  }
+
+  if (!data || !nextPrayer) {
+    return (
+      <main className="screen-center">
+        <section className="status-card">
+          <div className="loader" />
+          <span>Bugünün namaz vakitleri yükleniyor…</span>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="app-shell">
-      <section className="phone-card">
+      {engine.status === "locked" && (
+        <section className="audio-overlay">
+          <div className="audio-dialog">
+            <span className="audio-symbol">◖))</span>
+            <h2>Ezan sesini etkinleştir</h2>
+            <p>
+              iPad, otomatik ses için ilk açılışta bir kez dokunmanızı
+              gerektirir. Uygulama açık kaldığı sürece ezan vakitlerinde
+              otomatik çalacaktır.
+            </p>
+            <button type="button" onClick={engine.unlock}>
+              Ezanı etkinleştir
+            </button>
+          </div>
+        </section>
+      )}
+
+      <section className="dashboard">
         <header className="topbar">
-          <div>
-            <p className="eyebrow">Namaz Vakitleri</p>
-            <h1>Reston, Virginia</h1>
-            <p className="location">20191 · Doğu Amerika Saati</p>
+          <div className="location-block">
+            <div className="location-pin" aria-hidden="true">
+              ●
+            </div>
+            <div>
+              <p className="eyebrow">Reston Namaz Vakitleri</p>
+              <h1>Reston, Virginia</h1>
+              <p className="subtle">
+                20191 · Doğu Amerika Saati
+              </p>
+            </div>
           </div>
 
-          <div className="live-time" aria-label="Şu anki saat">
-            {formatTime(now)}
+          <div className="brand-mark" aria-hidden="true">
+            الله
+          </div>
+
+          <div className="clock-block">
+            <time>{formatTime(now)}</time>
+            <span>{data.readableDate}</span>
           </div>
         </header>
 
-        {error ? (
-          <div className="message error-message">
-            <strong>Bir sorun oluştu</strong>
-            <span>{error}</span>
+        <section className="next-card">
+          <div className="stars" aria-hidden="true">
+            ✦　·　✧
           </div>
-        ) : !data || !nextPrayer ? (
-          <div className="message">
-            <div className="loader" aria-hidden="true" />
-            <span>Bugünün namaz vakitleri yükleniyor…</span>
+          <p className="next-label">Sıradaki vakit</p>
+          <h2>{nextPrayer.label}</h2>
+          <div className="next-time">
+            {formatTime(nextPrayer.time)}
           </div>
-        ) : (
-          <>
-            <section className="hero">
-              <div className="hero-copy">
-                <p className="hero-label">Sıradaki vakit</p>
-                <h2>{nextPrayer.label}</h2>
-                <p className="hero-time">{formatTime(nextPrayer.time)}</p>
+          <div className="countdown">
+            <span className="countdown-icon">◷</span>
+            {nextPrayer.countdown}
+          </div>
 
-                <div className="countdown">
-                  <span className="pulse" />
-                  {nextPrayer.countdown} kaldı
-                </div>
-              </div>
+          <div className="mosque-scene" aria-hidden="true">
+            <div className="minaret minaret-left">
+              <i />
+            </div>
+            <div className="mosque-dome">
+              <i />
+            </div>
+            <div className="minaret minaret-right">
+              <i />
+            </div>
+            <div className="mosque-base">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+        </section>
 
-              <div className="mosque" aria-hidden="true">
-                <div className="moon">☾</div>
+        <section
+          className="prayer-panel"
+          aria-label="Bugünün namaz vakitleri"
+        >
+          {prayers.map((prayer) => {
+            const active = prayer.key === nextPrayer.key;
 
-                <div className="minaret left">
-                  <span />
-                </div>
-
-                <div className="dome">
-                  <span className="finial">◆</span>
-                </div>
-
-                <div className="minaret right">
-                  <span />
-                </div>
-
-                <div className="base">
-                  <i />
-                  <i />
-                  <i />
-                </div>
-              </div>
-            </section>
-
-            <section className="date-row">
-              <div>
-                <span>Bugün</span>
-                <strong>{data.readableDate}</strong>
-              </div>
-
-              <div className="hijri">
-                <span>Hicri Tarih</span>
-                <strong>{data.hijriDate}</strong>
-              </div>
-            </section>
-
-            <section className="prayer-list" aria-label="Bugünün namaz vakitleri">
-              {prayers.map((prayer) => {
-                const active = prayer.key === nextPrayer.key;
-
-                return (
-                  <article
-                    className={`prayer-row ${active ? "active" : ""}`}
-                    key={prayer.key}
+            return (
+              <article
+                key={prayer.key}
+                className={`prayer-row ${
+                  active ? "active" : ""
+                }`}
+              >
+                <div className="prayer-info">
+                  <span
+                    className="prayer-icon"
+                    aria-hidden="true"
                   >
-                    <div className="prayer-name">
-                      <span className="prayer-icon" aria-hidden="true">
-                        {prayer.icon}
-                      </span>
+                    {prayer.icon}
+                  </span>
+                  <div>
+                    <strong>{prayer.label}</strong>
+                    {active && <small>Sıradaki vakit</small>}
+                  </div>
+                </div>
+                <time>
+                  {formatTime(data.timings[prayer.key])}
+                </time>
+              </article>
+            );
+          })}
+        </section>
 
-                      <div>
-                        <strong>{prayer.label}</strong>
-                        {active && <small>Sıradaki vakit</small>}
-                      </div>
-                    </div>
+        <footer className="bottom-bar">
+          <div className="date-item">
+            <span className="footer-icon">▣</span>
+            <div>
+              <small>Bugün</small>
+              <strong>{data.readableDate}</strong>
+            </div>
+          </div>
 
-                    <time>{formatTime(data.timings[prayer.key])}</time>
-                  </article>
-                );
-              })}
-            </section>
+          <div className="engine-state">
+            <span
+              className={`engine-dot ${engine.status}`}
+            />
+            <span>
+              {engine.status === "playing" && engine.activePrayer
+                ? `${prayerLabels[engine.activePrayer]} ezanı okunuyor`
+                : engine.status === "error"
+                  ? engine.error
+                  : "Ezan sistemi hazır"}
+            </span>
+          </div>
 
-            <footer>
-              <p>Hesaplama yöntemi: {data.method}</p>
-              <p>
-                Namaz vakitleri hesaplamaya dayalı tahmini değerlerdir. Yerel
-                caminizin vakitleri farklıysa caminizin takvimini esas alın.
-              </p>
-            </footer>
-          </>
-        )}
+          <div className="date-item">
+            <span className="footer-icon">☾</span>
+            <div>
+              <small>Hicri Tarih</small>
+              <strong>{data.hijriDate}</strong>
+            </div>
+          </div>
+        </footer>
       </section>
     </main>
   );

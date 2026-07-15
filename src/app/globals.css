@@ -1,705 +1,568 @@
 @import "tailwindcss";
 
 :root {
-  --background: #eef3f2;
-  --card: #ffffff;
-  --ink: #173a3a;
-  --muted: #687b7a;
-  --green: #0d6b63;
-  --green-dark: #07554f;
-  --green-soft: #e8f3f0;
-  --line: #dfe8e6;
-  --gold: #f4c56a;
+  --bg: #02080c;
+  --panel: #071116;
+  --panel-soft: #0b171c;
+  --line: rgba(114, 189, 182, 0.16);
+  --text: #f5f8f7;
+  --muted: #9baaad;
+  --green: #4ad7c5;
+  --green-dark: #0b746c;
+  --gold: #f6c35f;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  background: var(--background);
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
 }
 
 body {
-  margin: 0;
-  color: var(--ink);
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 35%),
-    linear-gradient(160deg, #f7faf9 0%, #e4eeec 100%);
+  color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button,
-input {
-  font: inherit;
+button { font: inherit; }
+
+.app-shell,
+.screen-center {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(25, 104, 99, 0.18), transparent 32%),
+    radial-gradient(circle at 85% 20%, rgba(246, 195, 95, 0.06), transparent 22%),
+    #02080c;
 }
 
 .app-shell {
-  min-height: 100dvh;
-  padding: 24px;
+  padding: clamp(10px, 1.8vw, 22px);
   display: grid;
   place-items: center;
 }
 
-.phone-card {
-  width: min(100%, 540px);
+.dashboard {
+  width: min(1440px, 100%);
+  height: min(980px, calc(100dvh - 20px));
+  min-height: 620px;
+  padding: clamp(18px, 2.2vw, 34px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header"
+    "next prayers"
+    "footer footer";
+  gap: clamp(14px, 1.6vw, 24px);
+  background: linear-gradient(145deg, rgba(10, 21, 27, 0.98), rgba(3, 10, 14, 0.99));
+  border: 1px solid rgba(144, 215, 208, 0.12);
+  border-radius: 30px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.55);
   overflow: hidden;
-  background: var(--card);
-  border: 1px solid rgba(13, 107, 99, 0.12);
-  border-radius: 32px;
-  box-shadow: 0 28px 80px rgba(23, 58, 58, 0.14);
 }
 
 .topbar {
-  padding: 28px 28px 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+  grid-area: header;
+  min-height: 104px;
+  padding: 0 6px 18px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
 }
 
-.eyebrow,
-.hero-label {
+.location-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.location-pin {
+  width: 34px;
+  height: 45px;
+  position: relative;
+  display: grid;
+  place-items: start center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.location-pin::before {
+  content: "";
+  position: absolute;
+  width: 27px;
+  height: 35px;
+  top: 0;
+  border: 5px solid white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+
+.eyebrow {
   margin: 0 0 5px;
   color: var(--green);
-  font-size: 0.78rem;
+  font-size: clamp(0.72rem, 1vw, 0.9rem);
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(1.55rem, 6vw, 2rem);
-  line-height: 1.1;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  line-height: 1.05;
 }
 
-.location {
+.subtle {
   margin: 8px 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
 }
 
-.live-time {
-  flex: 0 0 auto;
-  padding: 10px 13px;
-  color: var(--green-dark);
-  background: var(--green-soft);
-  border-radius: 14px;
-  font-size: 1rem;
-  font-weight: 800;
+.brand-mark {
+  color: var(--gold);
+  font-family: serif;
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
 }
 
-.hero {
-  min-height: 230px;
-  margin: 0 18px;
-  padding: 28px;
-  position: relative;
-  overflow: hidden;
+.clock-block {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: white;
-  background:
-    radial-gradient(circle at 82% 18%, rgba(244, 197, 106, 0.42), transparent 17%),
-    linear-gradient(135deg, var(--green-dark), var(--green));
-  border-radius: 26px;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-.hero::before,
-.hero::after {
-  content: "";
-  position: absolute;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.hero::before {
-  width: 260px;
-  height: 260px;
-  right: -120px;
-  bottom: -150px;
-}
-
-.hero::after {
-  width: 160px;
-  height: 160px;
-  left: 45%;
-  top: -100px;
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 2;
-}
-
-.hero-label {
-  color: #bfe2dc;
-}
-
-.hero h2 {
-  margin: 0;
-  font-size: clamp(2.2rem, 10vw, 3.6rem);
+.clock-block time {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-weight: 800;
   line-height: 1;
 }
 
-.hero-time {
-  margin: 10px 0 18px;
-  color: #eaf7f4;
-  font-size: 1.35rem;
-  font-weight: 700;
+.clock-block span {
+  margin-top: 9px;
+  color: var(--muted);
+}
+
+.next-card {
+  grid-area: next;
+  position: relative;
+  min-height: 0;
+  padding: clamp(26px, 4vw, 58px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(32, 143, 132, 0.2), transparent 32%),
+    linear-gradient(155deg, #092f36, #06323a 55%, #071d24);
+  border: 1px solid rgba(74, 215, 197, 0.28);
+  border-radius: 28px;
+  isolation: isolate;
+}
+
+.stars {
+  position: absolute;
+  right: 10%;
+  top: 9%;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.next-label {
+  margin: 0;
+  color: var(--gold);
+  font-size: clamp(0.9rem, 1.8vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.next-card h2 {
+  margin: 20px 0 0;
+  position: relative;
+  z-index: 2;
+  font-size: clamp(4.6rem, 10vw, 9rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.next-time {
+  margin-top: clamp(28px, 5vh, 54px);
+  position: relative;
+  z-index: 2;
+  color: var(--gold);
+  font-size: clamp(3.2rem, 7vw, 6.5rem);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .countdown {
   width: fit-content;
-  padding: 9px 12px;
+  margin-top: 25px;
+  padding: 12px 22px;
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--green-dark);
-  background: white;
+  gap: 12px;
+  background: rgba(2, 13, 17, 0.52);
+  border: 1px solid rgba(74, 215, 197, 0.35);
   border-radius: 999px;
-  font-weight: 800;
+  font-size: clamp(0.9rem, 1.7vw, 1.25rem);
 }
 
-.pulse {
-  width: 9px;
-  height: 9px;
-  background: var(--gold);
-  border-radius: 50%;
-  box-shadow: 0 0 0 5px rgba(244, 197, 106, 0.2);
-}
+.countdown-icon { color: var(--green); }
 
-.mosque {
-  width: 180px;
-  height: 170px;
-  position: relative;
-  flex: 0 0 180px;
-  opacity: 0.96;
-}
-
-.moon {
+.mosque-scene {
+  width: 64%;
+  height: 52%;
   position: absolute;
-  right: 8px;
-  top: -8px;
-  color: var(--gold);
-  font-size: 2.4rem;
-  transform: rotate(-20deg);
-}
-
-.dome {
-  width: 100px;
-  height: 70px;
-  position: absolute;
-  left: 40px;
-  bottom: 38px;
-  background: #d8eee9;
-  border-radius: 60px 60px 8px 8px;
-}
-
-.finial {
-  position: absolute;
-  left: 44px;
-  top: -25px;
-  color: var(--gold);
-  font-size: 1.1rem;
+  right: 3%;
+  bottom: 0;
+  opacity: 0.7;
 }
 
 .minaret {
-  width: 24px;
-  height: 105px;
+  width: 9%;
+  height: 74%;
   position: absolute;
-  bottom: 38px;
-  background: #b9dfd7;
-  border-radius: 12px 12px 3px 3px;
+  bottom: 12%;
+  background: linear-gradient(#17363b, #0b2025);
+  border-radius: 50% 50% 0 0;
 }
 
 .minaret::before {
   content: "";
-  width: 36px;
-  height: 7px;
+  width: 140%;
+  height: 5%;
   position: absolute;
-  left: -6px;
-  top: 28px;
+  left: -20%;
+  top: 35%;
   background: var(--gold);
-  border-radius: 10px;
 }
 
-.minaret span {
-  width: 0;
-  height: 0;
+.minaret-left { left: 3%; }
+.minaret-right { right: 3%; }
+
+.mosque-dome {
+  width: 48%;
+  height: 49%;
   position: absolute;
-  left: 2px;
-  top: -22px;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 28px solid #b9dfd7;
+  left: 26%;
+  bottom: 15%;
+  background: linear-gradient(160deg, #14353a, #07171b);
+  border-radius: 55% 55% 8% 8%;
 }
 
-.minaret.left {
-  left: 8px;
-}
-
-.minaret.right {
-  right: 8px;
-}
-
-.base {
-  width: 180px;
-  height: 44px;
+.mosque-base {
+  width: 72%;
+  height: 19%;
   position: absolute;
-  left: 0;
+  left: 14%;
   bottom: 0;
   display: flex;
   justify-content: center;
-  gap: 15px;
-  background: #e9f7f4;
-  border-radius: 7px 7px 16px 16px;
+  gap: 5%;
+  background: #0b2025;
 }
 
-.base i {
-  width: 25px;
-  height: 33px;
-  margin-top: 11px;
-  display: block;
-  background: var(--green);
-  border-radius: 16px 16px 0 0;
+.mosque-base span {
+  width: 9%;
+  height: 70%;
+  margin-top: 7%;
+  background: #020b0e;
+  border-radius: 999px 999px 0 0;
 }
 
-.date-row {
-  margin: 24px 28px 12px;
-  padding-bottom: 18px;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  border-bottom: 1px solid var(--line);
-}
-
-.date-row div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.date-row span {
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.date-row strong {
-  font-size: 1rem;
-}
-
-.date-row .hijri {
-  text-align: right;
-}
-
-.prayer-list {
-  padding: 0 18px 12px;
+.prayer-panel {
+  grid-area: prayers;
+  padding: 12px 22px;
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  background: rgba(5, 14, 18, 0.76);
+  border: 1px solid var(--line);
+  border-radius: 28px;
 }
 
 .prayer-row {
-  min-height: 72px;
-  padding: 12px 14px;
+  min-height: 0;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  border-radius: 18px;
+  border-bottom: 1px solid rgba(144, 215, 208, 0.11);
 }
 
-.prayer-row + .prayer-row {
-  margin-top: 3px;
-}
+.prayer-row:last-child { border-bottom: 0; }
 
 .prayer-row.active {
-  background: var(--green-soft);
+  margin: 0 -10px;
+  padding-inline: 24px;
+  background: rgba(32, 112, 106, 0.2);
+  border-radius: 20px;
 }
 
-.prayer-name {
+.prayer-info {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(12px, 2vw, 24px);
 }
 
 .prayer-icon {
-  width: 43px;
-  height: 43px;
+  width: clamp(48px, 5vw, 70px);
+  height: clamp(48px, 5vw, 70px);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: rgba(255, 255, 255, 0.045);
+  border-radius: 16px;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+}
+
+.active .prayer-icon { color: var(--green); }
+
+.prayer-info div {
+  display: flex;
+  flex-direction: column;
+}
+
+.prayer-info strong,
+.prayer-row time {
+  font-size: clamp(1.25rem, 2.3vw, 2rem);
+}
+
+.prayer-info small {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.bottom-bar {
+  grid-area: footer;
+  min-height: 108px;
+  padding: 18px 34px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  background: rgba(5, 14, 18, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 25px;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.date-item:last-child { justify-self: end; }
+
+.footer-icon {
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
   color: var(--green);
-  background: #f1f6f5;
-  border-radius: 14px;
-  font-size: 1.25rem;
+  background: rgba(74, 215, 197, 0.08);
+  border-radius: 15px;
 }
 
-.active .prayer-icon {
-  color: white;
-  background: var(--green);
-}
-
-.prayer-name div {
+.date-item div {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
-.prayer-name strong,
-.prayer-row time {
-  font-size: 1.12rem;
-}
+.date-item small { color: var(--green); }
+.date-item strong { font-size: clamp(1rem, 1.8vw, 1.4rem); }
 
-.prayer-name small {
-  color: var(--green);
-  font-weight: 800;
-}
-
-.prayer-row time {
-  font-weight: 800;
-}
-
-footer {
-  padding: 18px 28px 28px;
-  color: var(--muted);
-  background: #f8faf9;
-  font-size: 0.78rem;
-  line-height: 1.5;
-}
-
-footer p {
-  margin: 0;
-}
-
-footer p + p {
-  margin-top: 4px;
-}
-
-.message {
-  min-height: 420px;
-  padding: 50px 24px;
+.engine-state {
+  max-width: 360px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 9px;
   color: var(--muted);
+  font-size: 0.82rem;
   text-align: center;
 }
 
-.error-message strong {
-  color: #8d2e2e;
-  font-size: 1.2rem;
+.engine-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  background: var(--muted);
+  border-radius: 50%;
+}
+
+.engine-dot.ready { background: var(--green); }
+.engine-dot.playing {
+  background: var(--gold);
+  box-shadow: 0 0 0 5px rgba(246, 195, 95, 0.12);
+}
+.engine-dot.error { background: #e56e6e; }
+
+.audio-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 5, 8, 0.86);
+  backdrop-filter: blur(16px);
+}
+
+.audio-dialog {
+  width: min(520px, 100%);
+  padding: 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(145deg, #0a1c22, #061116);
+  border: 1px solid rgba(74, 215, 197, 0.24);
+  border-radius: 28px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.audio-symbol {
+  width: 74px;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: rgba(246, 195, 95, 0.08);
+  border-radius: 22px;
+  font-size: 1.6rem;
+}
+
+.audio-dialog h2 {
+  margin: 24px 0 10px;
+  font-size: 1.9rem;
+}
+
+.audio-dialog p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.audio-dialog button {
+  margin-top: 28px;
+  padding: 14px 25px;
+  color: #04201f;
+  background: var(--green);
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.screen-center {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.status-card {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
 }
 
 .loader {
-  width: 36px;
-  height: 36px;
-  border: 4px solid var(--green-soft);
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(74, 215, 197, 0.16);
   border-top-color: var(--green);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* Telefon dikey görünümü */
-@media (max-width: 560px) and (orientation: portrait) {
-  .app-shell {
-    padding: 0;
-    display: block;
-  }
-
-  .phone-card {
+@media (max-width: 700px) and (orientation: portrait) {
+  .app-shell { padding: 0; display: block; }
+  .dashboard {
+    width: 100%;
+    height: auto;
     min-height: 100dvh;
+    padding: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: "header" "next" "prayers" "footer";
     border: 0;
     border-radius: 0;
-    box-shadow: none;
   }
-
-  .topbar {
-    padding: 22px 20px 18px;
+  .topbar { grid-template-columns: 1fr auto; }
+  .brand-mark { display: none; }
+  .clock-block span { display: none; }
+  .next-card { min-height: 410px; }
+  .prayer-panel { min-height: 560px; }
+  .bottom-bar {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
-
-  .hero {
-    min-height: 215px;
-    margin: 0 12px;
-    padding: 24px 20px;
-  }
-
-  .mosque {
-    width: 130px;
-    height: 150px;
-    flex-basis: 130px;
-    transform: scale(0.78);
-    transform-origin: right center;
-  }
-
-  .date-row {
-    margin-inline: 20px;
-  }
+  .engine-state { order: 3; }
+  .date-item:last-child { justify-self: start; }
 }
 
-@media (max-width: 390px) and (orientation: portrait) {
-  .mosque {
-    width: 90px;
-    flex-basis: 90px;
-    transform: scale(0.64);
-  }
-
-  .live-time {
-    display: none;
-  }
-}
-
-/* Laptop, tablet ve yatay telefon için dock görünümü */
-@media (min-width: 760px), (orientation: landscape) {
-  body {
-    overflow: hidden;
-  }
-
-  .app-shell {
-    height: 100dvh;
+@media (orientation: landscape) and (max-height: 800px) {
+  .app-shell { padding: 8px; }
+  .dashboard {
+    height: calc(100dvh - 16px);
     min-height: 0;
-    padding: clamp(10px, 2vw, 24px);
+    padding: 14px 18px;
+    grid-template-rows: 78px 1fr 68px;
+    gap: 10px 14px;
+    border-radius: 22px;
   }
-
-  .phone-card {
-    width: min(1180px, 100%);
-    height: min(760px, calc(100dvh - 20px));
-    display: grid;
-    grid-template-columns: minmax(330px, 1.05fr) minmax(390px, 1fr);
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas:
-      "topbar topbar"
-      "hero content"
-      "footer footer";
-    overflow: hidden;
-    border-radius: 28px;
+  .topbar { min-height: 0; padding-bottom: 10px; }
+  .eyebrow { font-size: 0.65rem; }
+  h1 { font-size: 1.45rem; }
+  .subtle { margin-top: 3px; font-size: 0.75rem; }
+  .brand-mark { font-size: 2.4rem; }
+  .clock-block time { font-size: 2.25rem; }
+  .clock-block span { margin-top: 3px; font-size: 0.72rem; }
+  .next-card { padding: 24px 30px; border-radius: 20px; }
+  .next-label { font-size: 0.76rem; }
+  .next-card h2 {
+    margin-top: 12px;
+    font-size: clamp(3.8rem, 9vw, 6.4rem);
   }
-
-  .topbar {
-    grid-area: topbar;
-    padding: 20px 24px 16px;
-    align-items: center;
+  .next-time {
+    margin-top: 18px;
+    font-size: clamp(2.7rem, 6vw, 4.2rem);
   }
-
-  .topbar h1 {
-    font-size: clamp(1.6rem, 2.7vw, 2.4rem);
-  }
-
-  .location {
-    margin-top: 5px;
-  }
-
-  .live-time {
-    font-size: 1.2rem;
-    padding: 12px 16px;
-  }
-
-  .hero {
-    grid-area: hero;
-    min-height: 0;
-    height: calc(100% - 24px);
-    margin: 0 10px 24px 24px;
-    padding: clamp(22px, 3vw, 40px);
-    border-radius: 24px;
-  }
-
-  .hero h2 {
-    font-size: clamp(3rem, 7vw, 5.4rem);
-  }
-
-  .hero-time {
-    font-size: clamp(1.4rem, 2.3vw, 2rem);
-  }
-
   .countdown {
-    max-width: 100%;
-    font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+    margin-top: 16px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
   }
-
-  .mosque {
-    transform: scale(1.05);
-    transform-origin: right center;
-  }
-
-  .date-row {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-    margin: 0 24px 10px 10px;
-    padding: 4px 0 14px;
-  }
-
-  .prayer-list {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: stretch;
-    margin-top: 78px;
-    padding: 0 24px 10px 10px;
-    display: grid;
-    grid-template-rows: repeat(6, minmax(48px, 1fr));
-    gap: 4px;
-    min-height: 0;
-  }
-
-  .prayer-row {
-    min-height: 0;
-    height: 100%;
-    padding: 8px 12px;
-  }
-
-  .prayer-row + .prayer-row {
-    margin-top: 0;
-  }
-
+  .prayer-panel { padding: 6px 14px; border-radius: 20px; }
+  .prayer-row { padding: 5px 9px; }
   .prayer-icon {
     width: 38px;
     height: 38px;
-    border-radius: 12px;
+    border-radius: 11px;
+    font-size: 1.05rem;
   }
-
-  .prayer-name strong,
-  .prayer-row time {
-    font-size: 1rem;
-  }
-
-  .prayer-name small {
-    font-size: 0.72rem;
-  }
-
-  footer {
-    grid-area: footer;
-    padding: 10px 24px 12px;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    font-size: 0.7rem;
-  }
-
-  footer p:first-child {
-    white-space: nowrap;
-  }
-
-  footer p + p {
-    margin-top: 0;
-    text-align: right;
-  }
-}
-
-/* Çok alçak yatay telefon ekranları */
-@media (orientation: landscape) and (max-height: 520px) {
-  .app-shell {
-    padding: 0;
-  }
-
-  .phone-card {
-    width: 100%;
-    height: 100dvh;
-    grid-template-columns: minmax(290px, 0.95fr) minmax(360px, 1.05fr);
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .topbar {
-    padding: 10px 16px 8px;
-  }
-
-  .eyebrow {
-    margin-bottom: 2px;
-    font-size: 0.68rem;
-  }
-
-  .topbar h1 {
-    font-size: 1.45rem;
-  }
-
-  .location {
-    font-size: 0.78rem;
-  }
-
-  .live-time {
-    padding: 8px 11px;
-    font-size: 1rem;
-  }
-
-  .hero {
-    margin: 0 8px 8px 12px;
-    padding: 18px;
+  .prayer-info { gap: 12px; }
+  .prayer-info strong, .prayer-row time { font-size: 1rem; }
+  .prayer-info small { font-size: 0.62rem; }
+  .bottom-bar {
+    min-height: 0;
+    padding: 8px 20px;
     border-radius: 18px;
   }
-
-  .hero h2 {
-    font-size: clamp(2.8rem, 8vw, 4rem);
+  .footer-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
   }
-
-  .hero-time {
-    margin: 6px 0 10px;
-    font-size: 1.2rem;
-  }
-
-  .countdown {
-    padding: 7px 10px;
-    font-size: 0.85rem;
-  }
-
-  .mosque {
-    transform: scale(0.76);
-  }
-
-  .date-row {
-    margin: 0 14px 6px 6px;
-    padding: 0 0 8px;
-  }
-
-  .date-row span {
-    font-size: 0.66rem;
-  }
-
-  .date-row strong {
-    font-size: 0.8rem;
-  }
-
-  .prayer-list {
-    margin-top: 50px;
-    padding: 0 14px 6px 6px;
-    gap: 2px;
-  }
-
-  .prayer-row {
-    padding: 4px 8px;
-    border-radius: 12px;
-  }
-
-  .prayer-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-    font-size: 1rem;
-  }
-
-  .prayer-name {
-    gap: 9px;
-  }
-
-  .prayer-name strong,
-  .prayer-row time {
-    font-size: 0.86rem;
-  }
-
-  .prayer-name small {
-    font-size: 0.62rem;
-  }
-
-  footer {
-    display: none;
-  }
+  .date-item { gap: 10px; }
+  .date-item small { font-size: 0.67rem; }
+  .date-item strong { font-size: 0.78rem; }
+  .engine-state { font-size: 0.68rem; }
 }
