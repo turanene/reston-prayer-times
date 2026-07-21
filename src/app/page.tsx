@@ -69,13 +69,21 @@ function formatTime(value: string | Date) {
 }
 
 function formatCountdown(milliseconds: number) {
-  const totalMinutes = Math.max(0, Math.floor(milliseconds / 60000));
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
 
-  if (hours === 0) return `${minutes} dakika kaldı`;
-  if (minutes === 0) return `${hours} saat kaldı`;
-  return `${hours} saat ${minutes} dakika kaldı`;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours === 0 && minutes === 0) {
+    return `${seconds} saniye kaldı`;
+  }
+
+  if (hours === 0) {
+    return `${minutes} dakika ${seconds} saniye kaldı`;
+  }
+
+  return `${hours} saat ${minutes} dakika ${seconds} saniye kaldı`;
 }
 
 export default function Home() {
@@ -192,7 +200,7 @@ export default function Home() {
             <span className="audio-symbol">◖))</span>
             <h2>Ezan sesini etkinleştir</h2>
             <p>
-              iPad, otomatik ses için ilk açılışta bir kez dokunmanızı
+              Otomatik ezan için ilk açılışta bir kez dokunmanızı
               gerektirir. Uygulama açık kaldığı sürece ezan vakitlerinde
               otomatik çalacaktır.
             </p>
