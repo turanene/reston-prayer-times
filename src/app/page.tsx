@@ -131,44 +131,58 @@ export default function Home() {
 
   const engine = usePrayerEngine(data?.timings ?? null);
 
-  const nextPrayer = useMemo(() => {
-    if (!data) return null;
+  const currentPrayer = useMemo(() => {
+  if (!data) return null;
 
-    const prayerOnly = prayers.filter(
-      (prayer) => prayer.key !== "Sunrise"
-    );
+  const schedule = prayers.map((prayer) => ({
+    ...prayer,
+    time: parseTodayTime(data.timings[prayer.key]),
+  }));
 
-    const upcoming = prayerOnly.find(
-      (prayer) =>
-        parseTodayTime(data.timings[prayer.key]).getTime() >
-        now.getTime()
-    );
-
-    if (upcoming) {
-      const time = parseTodayTime(data.timings[upcoming.key]);
-
-      return {
-        ...upcoming,
-        time,
-        countdown: formatCountdown(
-          time.getTime() - now.getTime()
-        ),
-      };
+  const currentTime = now.getTime();
+  let currentIndex = -1;
+  
+  for (let index = 0; index < schedule.length; index += 1) {
+    if (schedule[index].time.getTime() <= currentTime) {
+      currentIndex = index;
     }
+  }
+  
+  // Gece yarısından İmsak vaktine kadar mevcut vakit Yatsı'dır.
+  if (currentIndex === -1) {
 
-    const fajrTomorrow = parseTodayTime(data.timings.Fajr);
-    fajrTomorrow.setDate(fajrTomorrow.getDate() + 1);
+    const previousIsha = parseTodayTime(data.timings.Isha);
+    previousIsha.setDate(previousIsha.getDate() - 1);
+    const nextFajr = parseTodayTime(data.timings.Fajr);
 
     return {
-      key: "Fajr" as PrayerKey,
-      label: "İmsak",
-      icon: "☾",
-      time: fajrTomorrow,
+      key: "Isha" as PrayerKey,
+      label: "Yatsı",
+      icon: "✦",
+      time: previousIsha,
       countdown: formatCountdown(
-        fajrTomorrow.getTime() - now.getTime()
+        nextFajr.getTime() - currentTime
       ),
     };
-  }, [data, now]);
+  }
+
+  const current = schedule[currentIndex];
+  let nextTime: Date;
+
+  if (currentIndex < schedule.length - 1) {
+    nextTime = schedule[currentIndex + 1].time;
+  } else {
+    nextTime = parseTodayTime(data.timings.Fajr);
+    nextTime.setDate(nextTime.getDate() + 1);
+  }
+
+  return {
+    ...current,
+    countdown: formatCountdown(
+      nextTime.getTime() - currentTime
+    ),
+  };
+}, [data, now]);
 
   if (error) {
     return (
@@ -181,7 +195,7 @@ export default function Home() {
     );
   }
 
-  if (!data || !nextPrayer) {
+  if (!data || !currentPrayer) {
     return (
       <main className="screen-center">
         <section className="status-card">
@@ -240,14 +254,14 @@ export default function Home() {
           <div className="stars" aria-hidden="true">
             ✦　·　✧
           </div>
-          <p className="next-label">Sıradaki vakit</p>
-          <h2>{nextPrayer.label}</h2>
+          <p className="next-label">Şu anki vakit</p>
+          <h2>{currentPrayer.label}</h2>
           <div className="next-time">
-            {formatTime(nextPrayer.time)}
+            {formatTime(currentPrayer.time)}
           </div>
           <div className="countdown">
             <span className="countdown-icon">◷</span>
-            {nextPrayer.countdown}
+            {currentPrayer.countdown}
           </div>
 
           <div className="mosque-scene" aria-hidden="true">
@@ -275,7 +289,7 @@ export default function Home() {
           aria-label="Bugünün namaz vakitleri"
         >
           {prayers.map((prayer) => {
-            const active = prayer.key === nextPrayer.key;
+            const active = prayer.key === currentPrayer.key;
 
             return (
               <article
@@ -293,7 +307,7 @@ export default function Home() {
                   </span>
                   <div>
                     <strong>{prayer.label}</strong>
-                    {active && <small>Sıradaki vakit</small>}
+                    {active && <small>Şu anki vakit</small>}
                   </div>
                 </div>
                 <time>
