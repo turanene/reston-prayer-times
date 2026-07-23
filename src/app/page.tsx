@@ -131,6 +131,16 @@ export default function Home() {
 
   const engine = usePrayerEngine(data?.timings ?? null);
 
+  const isMorningTheme = useMemo(() => {
+    if (!data) return false;
+
+    const nowTime = now.getTime();
+    const sunrise = parseTodayTime(data.timings.Sunrise).getTime();
+    const dhuhr = parseTodayTime(data.timings.Dhuhr).getTime();
+
+    return nowTime >= sunrise && nowTime < dhuhr;
+  }, [data, now]);
+
   const currentPrayer = useMemo(() => {
   if (!data) return null;
 
@@ -207,7 +217,7 @@ export default function Home() {
   }
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell${isMorningTheme ? " theme-morning" : ""}`}>
       {engine.status === "locked" && (
         <section className="audio-overlay">
           <div className="audio-dialog">
